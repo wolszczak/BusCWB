@@ -1,16 +1,27 @@
 package com.horadoonibus.model;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 /**
  * Created by Wolszczak on 27/06/2019.
  */
+@DatabaseTable(tableName = "TabelaLinha")
 public class TabelaLinha {
 
+    @DatabaseField(columnName = "hora")
     private String hora;
+    @DatabaseField(columnName = "ponto")
     private String ponto;
+    @DatabaseField(columnName = "dia")
     private int dia;
+    @DatabaseField(columnName = "num")
     private int num;
+    @DatabaseField(columnName = "tabela")
     private int tabela;
+    @DatabaseField(columnName = "adapt")
     private String adapt;
+    @DatabaseField(columnName = "codigolinha")
     private String codigoLinha;
 
     public TabelaLinha() {
