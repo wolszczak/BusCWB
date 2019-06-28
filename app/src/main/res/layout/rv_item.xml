@@ -20,7 +20,7 @@
         android:shape="ring"
         android:background="#909090"
         android:elevation="5dp"
-        app:cardCornerRadius="4dp">
+        app:cardCornerRadius="5dp">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -41,10 +41,13 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/linha"
                         android:layout_gravity="center"
-                        android:layout_margin="3dp"
+                        android:layout_margin="5dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:padding="3dp"
                         android:background="@drawable/background_orange"
                         android:text="B12"
-                        android:textColor="#000000"
+                        android:textColor="#FFFFFF"
                         android:textSize="15sp" />
 
 
@@ -59,24 +62,36 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/nome"
+                        android:textSize="15sp"
                         android:text="Sta Candida / Capão Raso"
-                        android:textColor="#202020" />
+                        android:textStyle="bold"
+                        android:textColor="#303030" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="URBS"
+                        android:textSize="11sp"
                         android:textColor="#202020" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
+                        android:layout_margin="3dp"
                         android:background="#404040" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tipoLabel"
+                            android:text="Tipo:"
+                            android:textSize="10sp"
+                            android:textColor="#202020" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -88,9 +103,18 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/corLabel"
+                            android:layout_marginStart="10dp"
+                            android:text="Cor:"
+                            android:textColor="#202020" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:id="@+id/cor"
-                            android:layout_marginStart="15dp"
+                            android:layout_marginStart="5dp"
                             android:text="Vermelho"
+                            android:textStyle="bold"
                             android:textColor="#202020" />
                     </LinearLayout>
 

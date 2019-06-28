@@ -39,6 +39,19 @@ public class LinhasAdapter extends RecyclerView.Adapter<LinhasAdapter.LinhasView
         holder.nome.setText(mLinhas.get(position).getNome());
         holder.categoria.setText(mLinhas.get(position).getCategoria());
         holder.cor.setText(mLinhas.get(position).getCor());
+        if(mLinhas.get(position).getCor().equals("LARANJA")){
+            holder.cor.setTextColor(holder.view.getResources().getColor(R.color.colorOrange));
+        } else if(mLinhas.get(position).getCor().equals("VERDE")){
+            holder.cor.setTextColor(holder.view.getResources().getColor(R.color.colorGreen));
+        }else if(mLinhas.get(position).getCor().equals("VERMELHA")){
+            holder.cor.setTextColor(holder.view.getResources().getColor(R.color.colorRed));
+        }else if(mLinhas.get(position).getCor().equals("AMARELA")){
+            holder.cor.setTextColor(holder.view.getResources().getColor(R.color.colorYellow));
+        }else if(mLinhas.get(position).getCor().equals("PRATA")){
+            holder.cor.setTextColor(holder.view.getResources().getColor(R.color.colorSilver));
+        } else if(mLinhas.get(position).getCor().equals("BRANCA")){
+            holder.cor.setTextColor(holder.view.getResources().getColor(R.color.colorBranca));
+        }
         holder.view.setOnClickListener(onClick ->
                 mClickHandler.OnClickHandler(mLinhas.get(position)));
     }
