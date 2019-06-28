@@ -47,9 +47,9 @@ public class DataContext extends OrmLiteSqliteOpenHelper {
         return dao.queryForAll();
     }
 
-    public <T> List<T> getAllOrdered(Class<T> clazz, String orderBy, Long offset, boolean ascending) throws SQLException {
+    public <T> List<T> getAllOrdered(Class<T> clazz, String orderBy, Long limit, boolean ascending) throws SQLException {
         Dao<T, ?> dao = getDao(clazz);
-        return dao.queryBuilder().orderBy(orderBy, ascending).offset(offset).limit(30L).query();
+        return dao.queryBuilder().orderBy(orderBy, ascending).limit(limit).query();
     }
 
 

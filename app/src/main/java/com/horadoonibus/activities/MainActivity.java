@@ -21,6 +21,7 @@ import com.horadoonibus.api.RetrofitService;
 import com.horadoonibus.helpers.LinhasAdapter;
 import com.horadoonibus.helpers.Utils;
 import com.horadoonibus.model.DataContext;
+import com.horadoonibus.model.DataSingleton;
 import com.horadoonibus.model.Linha;
 
 import java.lang.reflect.Type;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
     private List<Linha> linhas = new ArrayList<>();
     private LinhasAdapter mLinhasAdapter;
     private GridLayoutManager gridLayoutManager;
-    private Long offset = 0L;
+    private Long limit = 20L;
     private boolean isScrolling = false;
     private int currentItems, totalItems, scrollOutItems;
 
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
 
         Retrofit retrofit = RetrofitService.getInstance();
         api = retrofit.create(RetrofitAPI.class);
-        db = new DataContext(this);
+        db = DataSingleton.getInstance(this);
         swipeLayout = findViewById(R.id.swipeLayout);
         swipeLayout.setRefreshing(true);
         mLinhasAdapter = new LinhasAdapter(MainActivity.this);
@@ -73,7 +74,8 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
                     for (Linha linha : lista) {
                         db.insert(linha);
                     }
-                    linhas.addAll(db.getAllOrdered(Linha.class,"NOME",offset,true));
+                    linhas =  new ArrayList<>();
+                    linhas.addAll(db.getAllOrdered(Linha.class,"NOME",limit,true));
                     swipeLayout.setRefreshing(false);
                     mLinhasAdapter.setLinhas(linhas);
                 } catch (SQLException e) {
@@ -106,9 +108,11 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
 
                 if (isScrolling && (currentItems + scrollOutItems == totalItems)) {
                         isScrolling = false;
-                        offset += 30;
+                        limit +=20;
                     try {
-                        linhas.addAll(db.getAllOrdered(Linha.class,"NOME",offset,true));
+                        linhas = new ArrayList<>();
+                        linhas.addAll(db.getAllOrdered(Linha.class,"NOME",limit,true));
+                        mLinhasAdapter.setLinhas(linhas);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -119,13 +123,13 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
         swipeLayout.setOnRefreshListener(() -> {
             linhas.clear();
             mLinhasAdapter.setLinhas(null);
-            offset += 30;
             try {
-                linhas.addAll(db.getAllOrdered(Linha.class,"NOME",offset,true));
+                linhas = new ArrayList<>();
+                linhas.addAll(db.getAllOrdered(Linha.class,"NOME",limit,true));
+                mLinhasAdapter.setLinhas(linhas);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-//            loadMovies(1);
         });
 
     }
