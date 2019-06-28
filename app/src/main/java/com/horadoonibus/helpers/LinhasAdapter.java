@@ -51,14 +51,18 @@ public class LinhasAdapter extends RecyclerView.Adapter<LinhasAdapter.LinhasView
 
     public class LinhasViewHolder extends RecyclerView.ViewHolder {
         private View view ;
-        TextView linha = view.findViewById(R.id.linha);
-        TextView nome = view.findViewById(R.id.nome);
-        TextView categoria = view.findViewById(R.id.categoria);
-        TextView cor = view.findViewById(R.id.cor);
+        TextView linha;
+        TextView nome;
+        TextView categoria;
+        TextView cor;
 
         public LinhasViewHolder(@NonNull View itemView) {
             super(itemView);
             this.view = itemView;
+            linha = view.findViewById(R.id.linha);
+            nome = view.findViewById(R.id.nome);
+            categoria = view.findViewById(R.id.categoria);
+            cor = view.findViewById(R.id.cor);
         }
     }
 
