@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
         Retrofit retrofit = RetrofitService.getInstance();
         api = retrofit.create(RetrofitAPI.class);
         db = DataSingleton.getInstance(this);
+        db = new DataContext(this);
         swipeLayout = findViewById(R.id.swipeLayout);
         swipeLayout.setRefreshing(true);
         mLinhasAdapter = new LinhasAdapter(MainActivity.this);
