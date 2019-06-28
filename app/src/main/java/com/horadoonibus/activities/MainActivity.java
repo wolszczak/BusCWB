@@ -1,10 +1,13 @@
 package com.horadoonibus.activities;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.widget.AbsListView;
 import android.widget.ListAdapter;
 import android.widget.Toast;
 
@@ -40,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
     private LinhasAdapter mLinhasAdapter;
     private GridLayoutManager gridLayoutManager;
     private Long offset = 0L;
+    private boolean isScrolling = false;
+    private int currentItems, totalItems, scrollOutItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
         swipeLayout.setRefreshing(true);
         mLinhasAdapter = new LinhasAdapter(MainActivity.this);
         gridLayoutManager = new GridLayoutManager(this, 1);
+        RecyclerView recyclerView = findViewById(R.id.rvLinhas);
+        recyclerView.setLayoutManager(gridLayoutManager);
         Call<Object> responseLinhas = api.getLinhas(Utils.AUTH_KEY);
         responseLinhas.enqueue(new Callback<Object>() {
             @Override
@@ -76,6 +83,36 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
+            }
+        });
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(mLinhasAdapter);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    isScrolling = true;
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                currentItems = gridLayoutManager.getChildCount();
+                totalItems = gridLayoutManager.getItemCount();
+                scrollOutItems = gridLayoutManager.findFirstVisibleItemPosition();
+
+                if (isScrolling && (currentItems + scrollOutItems == totalItems)) {
+                        isScrolling = false;
+                        offset += 30;
+                    try {
+                        linhas.addAll(db.getAllOrdered(Linha.class,"NOME",offset,true));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 

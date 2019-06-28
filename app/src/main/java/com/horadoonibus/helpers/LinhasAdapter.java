@@ -50,7 +50,7 @@ public class LinhasAdapter extends RecyclerView.Adapter<LinhasAdapter.LinhasView
     }
 
     public class LinhasViewHolder extends RecyclerView.ViewHolder {
-        private View view;
+        private View view ;
         TextView linha = view.findViewById(R.id.linha);
         TextView nome = view.findViewById(R.id.nome);
         TextView categoria = view.findViewById(R.id.categoria);
