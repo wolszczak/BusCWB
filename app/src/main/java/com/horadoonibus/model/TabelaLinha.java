@@ -3,11 +3,13 @@ package com.horadoonibus.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
+
 /**
  * Created by Wolszczak on 27/06/2019.
  */
 @DatabaseTable(tableName = "TabelaLinha")
-public class TabelaLinha {
+public class TabelaLinha implements Serializable {
 
     @DatabaseField(columnName = "hora")
     private String hora;

@@ -1,12 +1,20 @@
 package com.horadoonibus.activities;
 
+import android.Manifest;
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.widget.AbsListView;
 
 import com.google.gson.Gson;
@@ -46,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        requestPermissions();
         Retrofit retrofit = RetrofitService.getInstance();
         api = retrofit.create(RetrofitAPI.class);
         db = DataSingleton.getInstance(this);
@@ -141,9 +149,18 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
 
     }
 
+    private void requestPermissions() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION}, 200);
+        }
+    }
+
     @Override
     public void OnClickHandler(Linha linha) {
-        Intent intent = new Intent(this, DetailActivity.class);
+        Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra("LINHA", linha);
         startActivity(intent);
     }

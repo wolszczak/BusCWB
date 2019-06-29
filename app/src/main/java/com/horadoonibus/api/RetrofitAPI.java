@@ -22,7 +22,11 @@ public interface RetrofitAPI {
                                            @Query(value = "c", encoded = true) String userkey);
 
     @GET("/getVeiculos.php")
-    Call<Object> getVeiculos(@Query(value = "linha", encoded = true) String linha,
-                             @Query(value = "c", encoded = true) String userkey);
+    Call<List<Object>> getVeiculos(@Query(value = "linha", encoded = true) String linha,
+                                   @Query(value = "c", encoded = true) String userkey);
+
+    @GET("/getShapeLinha.php")
+    Call<List<Object>> getShapeLinha(@Query(value = "linha", encoded = true) String linha,
+                                   @Query(value = "c", encoded = true) String userkey);
 
 }

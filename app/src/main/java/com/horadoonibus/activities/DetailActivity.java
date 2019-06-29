@@ -1,10 +1,13 @@
 package com.horadoonibus.activities;
 
 import android.content.Intent;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
 
 import com.google.gson.Gson;
@@ -40,7 +43,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         Bundle data = getIntent().getExtras();
         db = DataSingleton.getInstance(this);
-        toolbar =  findViewById(R.id.toolbarDetail);
+        toolbar = findViewById(R.id.toolbarDetail);
         setSupportActionBar(toolbar);
         if (data != null) {
             linha = (Linha) data.get(LINHA);
@@ -52,7 +55,7 @@ public class DetailActivity extends AppCompatActivity {
         Retrofit retrofit = RetrofitService.getInstance();
         api = retrofit.create(RetrofitAPI.class);
 
-        Call<List<Object>> responseTabelaLinha = api.getTabelaLinha(linha.getCodigo(),Utils.AUTH_KEY);
+        Call<List<Object>> responseTabelaLinha = api.getTabelaLinha(linha.getCodigo(), Utils.AUTH_KEY);
         responseTabelaLinha.enqueue(new Callback<List<Object>>() {
             @Override
             public void onResponse(Call<List<Object>> call, Response<List<Object>> response) {
@@ -60,7 +63,8 @@ public class DetailActivity extends AppCompatActivity {
                     Gson gson = new Gson();
                     String json = gson.toJson(response.body());
 
-                    Type collectionType = new TypeToken<List<TabelaLinha>>(){}.getType();
+                    Type collectionType = new TypeToken<List<TabelaLinha>>() {
+                    }.getType();
                     List<TabelaLinha> lista = gson.fromJson(json, collectionType);
                     for (TabelaLinha tl : lista) {
                         db.insert(tl);
@@ -89,21 +93,21 @@ public class DetailActivity extends AppCompatActivity {
     public void weekdays(View view) {
         Intent it = new Intent(DetailActivity.this, HorariosActivity.class);
         it.putExtra("LINHA", linha);
-        it.putExtra("DIA",1);
+        it.putExtra("DIA", 1);
         startActivity(it);
     }
 
     public void saturdays(View view) {
         Intent it = new Intent(DetailActivity.this, HorariosActivity.class);
         it.putExtra("LINHA", linha);
-        it.putExtra("DIA",2);
+        it.putExtra("DIA", 2);
         startActivity(it);
     }
 
     public void sundays(View view) {
         Intent it = new Intent(DetailActivity.this, HorariosActivity.class);
         it.putExtra("LINHA", linha);
-        it.putExtra("DIA",3);
+        it.putExtra("DIA", 3);
         startActivity(it);
     }
 
