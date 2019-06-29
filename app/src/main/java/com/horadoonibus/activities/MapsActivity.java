@@ -1,6 +1,9 @@
 package com.horadoonibus.activities;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentActivity;
 
@@ -13,6 +16,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,23 +50,21 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import static android.content.Context.LOCATION_SERVICE;
+
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
     private static Linha linha;
     public Veiculos veiculo;
-    private Location myLocation;
+    private Location myLocation,myLastLocation;
     public List<ShapeLinha> shapes;
     private List<Veiculos> veiculos;
     public static final String LINHA = "LINHA";
-    private Toolbar toolbar;
     private RetrofitAPI api;
     private DataContext db;
     private LocationManager locationManager;
-
-    public Location getMyLocation() {
-        return myLocation;
-    }
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,54 +73,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
+//        buildGoogleApiClient();
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
 
         veiculos = new ArrayList<>();
         shapes = new ArrayList<>();
         Bundle data = getIntent().getExtras();
         db = DataSingleton.getInstance(this);
-        toolbar = findViewById(R.id.toolbar);
+//        toolbar = findViewById(R.id.toolbar);
         if (data != null) {
-            veiculo = (Veiculos) data.get("VEICULOS");
-            toolbar.setTitle(veiculo.getCodigo());
+            linha = (Linha) data.get("LINHA");
+//            toolbar.setTitle(veiculo.getCodigo());
         }
         Retrofit retrofit = RetrofitService.getInstance();
         api = retrofit.create(RetrofitAPI.class);
 
-        Call<List<Object>> responseVeiculos = api.getVeiculos(linha.getCodigo(), Utils.AUTH_KEY);
-        responseVeiculos.enqueue(new Callback<List<Object>>() {
-            @Override
-            public void onResponse(Call<List<Object>> call, Response<List<Object>> response) {
-                Gson gson = new Gson();
-                String json = gson.toJson(response.body());
 
-                Type collectionType = new TypeToken<List<Veiculos>>() {
-                }.getType();
-                veiculos = gson.fromJson(json, collectionType);
-            }
 
-            @Override
-            public void onFailure(Call<List<Object>> call, Throwable t) {
 
-            }
-        });
-
-        Call<List<Object>> responseShape = api.getShapeLinha(linha.getCodigo(), Utils.AUTH_KEY);
-        responseShape.enqueue(new Callback<List<Object>>() {
-            @Override
-            public void onResponse(Call<List<Object>> call, Response<List<Object>> response) {
-                Gson gson = new Gson();
-                String json = gson.toJson(response.body());
-                Type collectionType = new TypeToken<List<ShapeLinha>>() {
-                }.getType();
-                shapes = gson.fromJson(json, collectionType);
-            }
-            @Override
-            public void onFailure(Call<List<Object>> call, Throwable t) {
-
-            }
-        });
 
     }
 
@@ -124,40 +98,62 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        myLocation = getLastKnownLocation();//locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        // Add a marker in Sydney and move the camera
-        LatLng local = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(local));
-
-        for(ShapeLinha sl : shapes){
-            LatLng coordenadas = new LatLng(sl.getLatitude(),sl.getLongitude());
-            Marker m = mMap.addMarker(new MarkerOptions()
-                    .position(coordenadas)
-                    .flat(true)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.background_orange))
-                    .rotation(myLocation.getBearing()));
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
+//        LatLng local = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(local));
+
+//        for (ShapeLinha sl : shapes) {
+//            LatLng coordenadas = new LatLng(sl.getLatitude(), sl.getLongitude());
+//            Marker m = mMap.addMarker(new MarkerOptions()
+//                    .position(coordenadas)
+//                    .flat(true)
+//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.background_orange))
+//                    .rotation(myLocation.getBearing()));
+//        }
     }
 
+//    protected synchronized void buildGoogleApiClient() {
+//        mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+//                    @RequiresApi(api = Build.VERSION_CODES.M)
+//                    @Override
+//                    public void onConnected(@Nullable Bundle bundle) {
+//                        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                            return;
+//                        }
+//                        myLocation = LocationServices.FusedLocationApi.getLastLocation(
+//                                mGoogleApiClient);
+//                    }
+//
+//                    @Override
+//                    public void onConnectionSuspended(int i) {
+//
+//                    }
+//                })
+//                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+//                    @Override
+//                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+//
+//                    }
+//                })
+//                .addApi(LocationServices.API)
+//                .build();
+//    }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private Location getLastKnownLocation() {
-        locationManager = (LocationManager) this.getApplicationContext().getSystemService(LOCATION_SERVICE);
-        List<String> providers = locationManager.getProviders(true);
-        Location bestLocation = null;
-        for (String provider : providers) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return null;
-            }
-            Location l = locationManager.getLastKnownLocation(provider);
-            if (l == null) {
-                continue;
-            }
-            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                // Found best last known location: %s", l);
-                bestLocation = l;
-            }
-        }
-        return bestLocation;
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }
