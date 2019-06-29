@@ -1,19 +1,15 @@
 package com.horadoonibus.activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.AbsListView;
-import android.widget.ListAdapter;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.horadoonibus.R;
 import com.horadoonibus.api.RetrofitAPI;
@@ -29,7 +25,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -55,39 +50,50 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
         Retrofit retrofit = RetrofitService.getInstance();
         api = retrofit.create(RetrofitAPI.class);
         db = DataSingleton.getInstance(this);
-        db = new DataContext(this);
         swipeLayout = findViewById(R.id.swipeLayout);
         swipeLayout.setRefreshing(true);
         mLinhasAdapter = new LinhasAdapter(MainActivity.this);
         gridLayoutManager = new GridLayoutManager(this, 1);
         RecyclerView recyclerView = findViewById(R.id.rvLinhas);
         recyclerView.setLayoutManager(gridLayoutManager);
-        Call<Object> responseLinhas = api.getLinhas(Utils.AUTH_KEY);
-        responseLinhas.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-                try {
-                    Gson gson = new Gson();
-                    String json = gson.toJson(response.body());
+        try {
+            linhas = db.getAll(Linha.class);
+            int total = linhas.size();
+            if (total == 0) {
+                Call<Object> responseLinhas = api.getLinhas(Utils.AUTH_KEY);
+                responseLinhas.enqueue(new Callback<Object>() {
+                    @Override
+                    public void onResponse(Call<Object> call, Response<Object> response) {
+                        try {
+                            Gson gson = new Gson();
+                            String json = gson.toJson(response.body());
 
-                    Type collectionType = new TypeToken<List<Linha>>(){}.getType();
-                    List<Linha> lista = gson.fromJson(json, collectionType);
-                    for (Linha linha : lista) {
-                        db.insert(linha);
+                            Type collectionType = new TypeToken<List<Linha>>() {
+                            }.getType();
+                            List<Linha> lista = gson.fromJson(json, collectionType);
+                            for (Linha linha : lista) {
+                                db.insert(linha);
+                            }
+                            linhas = new ArrayList<>();
+                            linhas.addAll(db.getAllOrdered(Linha.class, "NOME", limit, true));
+                            swipeLayout.setRefreshing(false);
+                            mLinhasAdapter.setLinhas(linhas);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    linhas =  new ArrayList<>();
-                    linhas.addAll(db.getAllOrdered(Linha.class,"NOME",limit,true));
-                    swipeLayout.setRefreshing(false);
-                    mLinhasAdapter.setLinhas(linhas);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+                    @Override
+                    public void onFailure(Call<Object> call, Throwable t) {
+                    }
+                });
+            } else {
+                mLinhasAdapter.setLinhas(linhas);
+                swipeLayout.setRefreshing(false);
             }
-        });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mLinhasAdapter);
@@ -108,11 +114,11 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
                 scrollOutItems = gridLayoutManager.findFirstVisibleItemPosition();
 
                 if (isScrolling && (currentItems + scrollOutItems == totalItems)) {
-                        isScrolling = false;
-                        limit +=20;
+                    isScrolling = false;
+                    limit += 20;
                     try {
                         linhas = new ArrayList<>();
-                        linhas.addAll(db.getAllOrdered(Linha.class,"NOME",limit,true));
+                        linhas.addAll(db.getAllOrdered(Linha.class, "NOME", limit, true));
                         mLinhasAdapter.setLinhas(linhas);
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -126,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements LinhasAdapter.OnC
             mLinhasAdapter.setLinhas(null);
             try {
                 linhas = new ArrayList<>();
-                linhas.addAll(db.getAllOrdered(Linha.class,"NOME",limit,true));
+                linhas.addAll(db.getAllOrdered(Linha.class, "NOME", limit, true));
                 mLinhasAdapter.setLinhas(linhas);
             } catch (SQLException e) {
                 e.printStackTrace();

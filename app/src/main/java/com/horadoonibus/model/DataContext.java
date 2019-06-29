@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class DataContext extends OrmLiteSqliteOpenHelper {
 
-    private static final String DB_NAME = "x.db";
+    private static final String DB_NAME = "demoapp.db";
     private static final int DB_VERSION = 1;
 
     public DataContext(Context context) {
