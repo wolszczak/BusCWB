@@ -10,24 +10,30 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.horadoonibus.R;
 import com.horadoonibus.api.RetrofitAPI;
@@ -42,6 +48,7 @@ import com.horadoonibus.model.Veiculos;
 
 import java.lang.reflect.Type;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +64,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private static Linha linha;
     public Veiculos veiculo;
-    private Location myLocation,myLastLocation;
+    private Location myLocation, myLastLocation;
     public List<ShapeLinha> shapes;
     private List<Veiculos> veiculos;
     public static final String LINHA = "LINHA";
@@ -89,9 +96,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         api = retrofit.create(RetrofitAPI.class);
 
 
-
-
-
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -101,46 +105,63 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-//        LatLng local = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(local));
 
-//        for (ShapeLinha sl : shapes) {
-//            LatLng coordenadas = new LatLng(sl.getLatitude(), sl.getLongitude());
-//            Marker m = mMap.addMarker(new MarkerOptions()
-//                    .position(coordenadas)
-//                    .flat(true)
-//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.background_orange))
-//                    .rotation(myLocation.getBearing()));
-//        }
+        Call<List<Object>> response = api.getShapeLinha(linha.getCodigo(), Utils.AUTH_KEY);
+        response.enqueue(new Callback<List<Object>>() {
+            @Override
+            public void onResponse(Call<List<Object>> call, Response<List<Object>> response) {
+                Gson gson = new Gson();
+                String json = gson.toJson(response.body());
+
+                Type collectionType = new TypeToken<List<ShapeLinha>>() {
+                }.getType();
+                json = json.replaceAll("-25,", "-25.");
+                json = json.replaceAll("-49,", "-49.");
+                shapes = gson.fromJson(json, collectionType);
+                PolylineOptions options = new PolylineOptions().width(10).color(Color.RED).geodesic(true).clickable(false);
+                for (ShapeLinha sl : shapes) {
+                    LatLng coordenadas = new LatLng(sl.getLatitude(), sl.getLongitude());
+                    options.add(coordenadas);
+                }
+                mMap.addPolyline(options);
+                mMap.moveCamera(CameraUpdateFactory
+                        .newLatLngBounds(LatLngBounds.builder()
+                                .include(new LatLng(shapes.get(shapes.size()/2).getLatitude(),shapes.get(shapes.size()/2).getLongitude()))
+                                .include(new LatLng(shapes.get(0).getLatitude(), shapes.get(0).getLongitude()))
+                                .build(), 50));
+            }
+
+            @Override
+            public void onFailure(Call<List<Object>> call, Throwable t) {
+
+            }
+
+        });
+        Call<List<Object>> responseVeiculos = api.getVeiculos(linha.getCodigo(), Utils.AUTH_KEY);
+        responseVeiculos.enqueue(new Callback<List<Object>>() {
+            @Override
+            public void onResponse(Call<List<Object>> call, Response<List<Object>> response) {
+                Gson gson = new Gson();
+                String json = gson.toJson(response.body());
+
+                Type collectionType = new TypeToken<List<Veiculos>>() {
+                }.getType();
+                json = json.replaceAll("-25,", "-25.");
+                json = json.replaceAll("-49,", "-49.");
+                shapes = gson.fromJson(json, collectionType);
+            }
+
+            @Override
+            public void onFailure(Call<List<Object>> call, Throwable t) {
+
+            }
+
+        });
+
+
     }
 
-//    protected synchronized void buildGoogleApiClient() {
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-//                    @RequiresApi(api = Build.VERSION_CODES.M)
-//                    @Override
-//                    public void onConnected(@Nullable Bundle bundle) {
-//                        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                            return;
-//                        }
-//                        myLocation = LocationServices.FusedLocationApi.getLastLocation(
-//                                mGoogleApiClient);
-//                    }
-//
-//                    @Override
-//                    public void onConnectionSuspended(int i) {
-//
-//                    }
-//                })
-//                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-//                    @Override
-//                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//
-//                    }
-//                })
-//                .addApi(LocationServices.API)
-//                .build();
-//    }
+
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -155,5 +176,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }
