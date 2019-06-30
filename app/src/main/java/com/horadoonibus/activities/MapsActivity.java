@@ -70,8 +70,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static final String LINHA = "LINHA";
     private RetrofitAPI api;
     private DataContext db;
-    private LocationManager locationManager;
-    private GoogleApiClient mGoogleApiClient;
+    PolylineOptions options;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +79,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-//        buildGoogleApiClient();
-        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
 
         veiculos = new ArrayList<>();
         shapes = new ArrayList<>();
@@ -94,8 +91,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         Retrofit retrofit = RetrofitService.getInstance();
         api = retrofit.create(RetrofitAPI.class);
-
-
+        options = new PolylineOptions();
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -106,6 +102,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
 
+        updateMap();
+
+    }
+
+    private void updateMap() {
+        mMap.clear();
         Call<List<Object>> response = api.getShapeLinha(linha.getCodigo(), Utils.AUTH_KEY);
         response.enqueue(new Callback<List<Object>>() {
             @Override
@@ -118,7 +120,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 json = json.replaceAll("-25,", "-25.");
                 json = json.replaceAll("-49,", "-49.");
                 shapes = gson.fromJson(json, collectionType);
-                PolylineOptions options = new PolylineOptions().width(10).color(Color.RED).geodesic(true).clickable(false);
+                options = new PolylineOptions().width(10).color(Color.RED).geodesic(true).clickable(false);
                 for (ShapeLinha sl : shapes) {
                     LatLng coordenadas = new LatLng(sl.getLatitude(), sl.getLongitude());
                     options.add(coordenadas);
@@ -126,7 +128,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.addPolyline(options);
                 mMap.moveCamera(CameraUpdateFactory
                         .newLatLngBounds(LatLngBounds.builder()
-                                .include(new LatLng(shapes.get(shapes.size()/2).getLatitude(),shapes.get(shapes.size()/2).getLongitude()))
+                                .include(new LatLng(shapes.get(shapes.size() / 2).getLatitude(), shapes.get(shapes.size() / 2).getLongitude()))
                                 .include(new LatLng(shapes.get(0).getLatitude(), shapes.get(0).getLongitude()))
                                 .build(), 50));
             }
@@ -148,7 +150,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }.getType();
                 json = json.replaceAll("-25,", "-25.");
                 json = json.replaceAll("-49,", "-49.");
-                shapes = gson.fromJson(json, collectionType);
+                veiculos = gson.fromJson(json, collectionType);
+
+                for (Veiculos v : veiculos) {
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(v.getLatitude(), v.getLongitude())));
+                }
             }
 
             @Override
@@ -157,11 +163,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
         });
-
-
     }
-
-
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {

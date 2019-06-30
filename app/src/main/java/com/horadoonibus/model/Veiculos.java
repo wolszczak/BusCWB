@@ -1,7 +1,6 @@
 package com.horadoonibus.model;
 
 import com.google.gson.annotations.SerializedName;
-import com.j256.ormlite.field.DatabaseField;
 
 import java.io.Serializable;
 
@@ -10,72 +9,60 @@ import java.io.Serializable;
  */
 public class Veiculos implements Serializable {
 
-    @SerializedName("COD")
-    private String codigo;
-    @SerializedName("REFRESH")
-    private String refresh;
+    @SerializedName("PREFIXO")
+    private String prefixo;
+    @SerializedName("HORA")
+    private String hora;
     @SerializedName("LAT")
-    private Long latitude;
+    private Double latitude;
     @SerializedName("LON")
-    private String longitude;
-    @SerializedName("CODIGOLINHA")
+    private Double longitude;
+    @SerializedName("LINHA")
     private String linha;
     @SerializedName("ADAPT")
     private String adaptado;
-    @SerializedName("TIPO_VEIC")
-    private String tipoVeiculo;
-    @SerializedName("TABELA")
-    private String tabela;
-    @SerializedName("SITUACAO")
-    private String situacao;
-    @SerializedName("TCOUNT")
-    private String tcount;
 
     public Veiculos() {
     }
 
-    public Veiculos(String codigo, String refresh, Long latitude, String longitude, String linha, String adaptado, String tipoVeiculo, String tabela, String situacao, String tcount) {
-        this.codigo = codigo;
-        this.refresh = refresh;
+    public Veiculos(String prefixo, String hora, Double latitude, Double longitude, String linha, String adaptado) {
+        this.prefixo = prefixo;
+        this.hora = hora;
         this.latitude = latitude;
         this.longitude = longitude;
         this.linha = linha;
         this.adaptado = adaptado;
-        this.tipoVeiculo = tipoVeiculo;
-        this.tabela = tabela;
-        this.situacao = situacao;
-        this.tcount = tcount;
     }
 
-    public String getCodigo() {
-        return codigo;
+    public String getPrefixo() {
+        return prefixo;
     }
 
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+    public void setPrefixo(String prefixo) {
+        this.prefixo = prefixo;
     }
 
-    public String getRefresh() {
-        return refresh;
+    public String getHora() {
+        return hora;
     }
 
-    public void setRefresh(String refresh) {
-        this.refresh = refresh;
+    public void setHora(String hora) {
+        this.hora = hora;
     }
 
-    public Long getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Long latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public String getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
@@ -94,36 +81,5 @@ public class Veiculos implements Serializable {
     public void setAdaptado(String adaptado) {
         this.adaptado = adaptado;
     }
-
-    public String getTipoVeiculo() {
-        return tipoVeiculo;
-    }
-
-    public void setTipoVeiculo(String tipoVeiculo) {
-        this.tipoVeiculo = tipoVeiculo;
-    }
-
-    public String getTabela() {
-        return tabela;
-    }
-
-    public void setTabela(String tabela) {
-        this.tabela = tabela;
-    }
-
-    public String getSituacao() {
-        return situacao;
-    }
-
-    public void setSituacao(String situacao) {
-        this.situacao = situacao;
-    }
-
-    public String getTcount() {
-        return tcount;
-    }
-
-    public void setTcount(String tcount) {
-        this.tcount = tcount;
-    }
 }
+

@@ -21,7 +21,7 @@ public interface RetrofitAPI {
     Call<List<Object>> getTabelaLinha(@Query(value = "linha", encoded = true) String linha,
                                            @Query(value = "c", encoded = true) String userkey);
 
-    @GET("/getVeiculos.php")
+    @GET("/getVeiculosLinha.php")
     Call<List<Object>> getVeiculos(@Query(value = "linha", encoded = true) String linha,
                                    @Query(value = "c", encoded = true) String userkey);
 
