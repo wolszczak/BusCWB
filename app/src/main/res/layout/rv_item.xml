@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:foreground="?android:selectableItemBackground"
+        android:foreground="?attr/selectableItemBackground"
         android:innerRadius="0dp"
         android:shape="ring"
         android:background="#909090"
@@ -93,7 +93,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/tipoLabel"
-                            android:text="Tipo : "
+                            android:text="Tipo: "
                             android:textSize="12sp"
                             android:layout_marginBottom="5dp"
                             android:textColor="#202020" />
@@ -111,14 +111,13 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/corLabel"
                             android:layout_marginStart="10dp"
-                            android:text="Cor : "
+                            android:text="Cor: "
                             android:textColor="#202020" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/cor"
-                            android:layout_marginStart="3dp"
                             android:text="Vermelho"
                             android:textStyle="bold"
                             android:textColor="#202020" />
