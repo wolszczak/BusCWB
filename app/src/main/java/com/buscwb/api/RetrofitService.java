@@ -16,7 +16,7 @@ public class RetrofitService {
         if (retrofit==null) {
             Gson gson = new GsonBuilder().setLenient().create();
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://transporteservico.urbs.curitiba.pr.gov.br")
+                    .baseUrl("https://transporteservico.urbs.curitiba.pr.gov.br")
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
