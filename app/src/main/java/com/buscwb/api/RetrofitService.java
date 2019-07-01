@@ -1,4 +1,4 @@
-package com.horadoonibus.api;
+package com.buscwb.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

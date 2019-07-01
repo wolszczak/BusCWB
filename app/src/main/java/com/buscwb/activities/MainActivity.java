@@ -1,4 +1,4 @@
-package com.horadoonibus.activities;
+package com.buscwb.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -19,14 +19,14 @@ import android.widget.AbsListView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.horadoonibus.R;
-import com.horadoonibus.api.RetrofitAPI;
-import com.horadoonibus.api.RetrofitService;
-import com.horadoonibus.helpers.LinhasAdapter;
-import com.horadoonibus.helpers.Utils;
-import com.horadoonibus.model.DataContext;
-import com.horadoonibus.model.DataSingleton;
-import com.horadoonibus.model.Linha;
+import com.buscwb.R;
+import com.buscwb.api.RetrofitAPI;
+import com.buscwb.api.RetrofitService;
+import com.buscwb.helpers.LinhasAdapter;
+import com.buscwb.helpers.Utils;
+import com.buscwb.model.DataContext;
+import com.buscwb.model.DataSingleton;
+import com.buscwb.model.Linha;
 
 import java.lang.reflect.Type;
 import java.sql.SQLException;

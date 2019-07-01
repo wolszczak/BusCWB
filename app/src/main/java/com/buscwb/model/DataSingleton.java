@@ -1,12 +1,6 @@
-package com.horadoonibus.model;
+package com.buscwb.model;
 
 import android.content.Context;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Wolszczak on 27/06/2019.

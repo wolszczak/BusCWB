@@ -1,4 +1,4 @@
-package com.horadoonibus.model;
+package com.buscwb.model;
 
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;

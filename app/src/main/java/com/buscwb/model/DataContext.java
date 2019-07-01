@@ -1,4 +1,4 @@
-package com.horadoonibus.model;
+package com.buscwb.model;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

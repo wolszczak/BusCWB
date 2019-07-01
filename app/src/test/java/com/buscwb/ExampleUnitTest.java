@@ -1,4 +1,4 @@
-package com.horadoonibus;
+package com.buscwb;
 
 import org.junit.Test;
 

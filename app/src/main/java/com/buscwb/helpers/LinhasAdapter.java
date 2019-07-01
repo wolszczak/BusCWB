@@ -1,4 +1,4 @@
-package com.horadoonibus.helpers;
+package com.buscwb.helpers;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.horadoonibus.R;
-import com.horadoonibus.model.Linha;
+import com.buscwb.R;
+import com.buscwb.model.Linha;
 
 import java.util.List;
 

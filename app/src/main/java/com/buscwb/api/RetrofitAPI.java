@@ -1,7 +1,4 @@
-package com.horadoonibus.api;
-
-import com.horadoonibus.model.Linha;
-import com.horadoonibus.model.TabelaLinha;
+package com.buscwb.api;
 
 import java.util.List;
 

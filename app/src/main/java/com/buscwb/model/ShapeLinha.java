@@ -1,9 +1,8 @@
-package com.horadoonibus.model;
+package com.buscwb.model;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
 
 /**
  * Created by Wolszczak on 29/06/2019.

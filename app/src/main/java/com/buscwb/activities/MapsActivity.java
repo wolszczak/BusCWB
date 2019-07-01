@@ -1,4 +1,4 @@
-package com.horadoonibus.activities;
+package com.buscwb.activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +23,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -30,15 +30,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.horadoonibus.R;
-import com.horadoonibus.api.RetrofitAPI;
-import com.horadoonibus.api.RetrofitService;
-import com.horadoonibus.helpers.Utils;
-import com.horadoonibus.model.DataContext;
-import com.horadoonibus.model.DataSingleton;
-import com.horadoonibus.model.Linha;
-import com.horadoonibus.model.ShapeLinha;
-import com.horadoonibus.model.Veiculos;
+import com.buscwb.R;
+import com.buscwb.api.RetrofitAPI;
+import com.buscwb.api.RetrofitService;
+import com.buscwb.helpers.Utils;
+import com.buscwb.model.DataContext;
+import com.buscwb.model.DataSingleton;
+import com.buscwb.model.Linha;
+import com.buscwb.model.ShapeLinha;
+import com.buscwb.model.Veiculos;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -134,7 +134,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onFailure(Call<List<Object>> call, Throwable t) {
-
+                Toast.makeText(MapsActivity.this, "Falha no getshapes", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -159,7 +159,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onFailure(Call<List<Object>> call, Throwable t) {
-
+                Toast.makeText(MapsActivity.this, "Falha no getVeiculos", Toast.LENGTH_SHORT).show();
             }
 
         });
