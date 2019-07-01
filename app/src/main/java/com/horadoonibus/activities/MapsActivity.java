@@ -1,22 +1,18 @@
 package com.horadoonibus.activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -24,16 +20,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.horadoonibus.R;
 import com.horadoonibus.api.RetrofitAPI;
@@ -43,12 +36,9 @@ import com.horadoonibus.model.DataContext;
 import com.horadoonibus.model.DataSingleton;
 import com.horadoonibus.model.Linha;
 import com.horadoonibus.model.ShapeLinha;
-import com.horadoonibus.model.TabelaLinha;
 import com.horadoonibus.model.Veiculos;
 
 import java.lang.reflect.Type;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,8 +46,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-
-import static android.content.Context.LOCATION_SERVICE;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -70,7 +58,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static final String LINHA = "LINHA";
     private RetrofitAPI api;
     private DataContext db;
-    PolylineOptions options;
+    private PolylineOptions options;
+    private TextView tvLinha;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +74,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         shapes = new ArrayList<>();
         Bundle data = getIntent().getExtras();
         db = DataSingleton.getInstance(this);
-//        toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbarMap);
+        tvLinha = findViewById(R.id.tvLinha);
+        setSupportActionBar(toolbar);
         if (data != null) {
             linha = (Linha) data.get("LINHA");
-//            toolbar.setTitle(veiculo.getCodigo());
+//            tvLinha.setText(linha.getCodigo() + " - " + linha.getNome());
         }
         Retrofit retrofit = RetrofitService.getInstance();
         api = retrofit.create(RetrofitAPI.class);
@@ -153,7 +145,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 veiculos = gson.fromJson(json, collectionType);
 
                 for (Veiculos v : veiculos) {
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(v.getLatitude(), v.getLongitude())));
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(v.getLatitude(), v.getLongitude()))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_map_35px)));
                 }
             }
 
